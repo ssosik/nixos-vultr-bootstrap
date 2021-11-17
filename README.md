@@ -137,8 +137,9 @@ cat <<EOF > /mnt/etc/nixos/flake.nix
 EOF
 
 cd /mnt/etc/nixos
-git init .
-git branch -m main
+git init -b main .
+git config user.email "steve@little-fluffy.cloud"
+git config user.name "steve"
 git add key.pub *.nix
 ```
 
@@ -158,3 +159,17 @@ Reboot and verify
 - Remove the ISO. This will reboot the instance.
 - SSH into the machine after it boots.
     - Need to remove previous entry from .ssh/known_hosts on the local machine
+
+## Update
+
+Log back into the machine after the reboot, clearing out the .ssh/known_hosts
+entry if needed.
+
+```
+sudo -s
+<password for the hashedPassword above>
+
+cd /etc/nixos
+nix flake update
+nixos-rebuild switch --flake .#testmachine
+```
