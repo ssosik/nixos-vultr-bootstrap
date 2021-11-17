@@ -139,10 +139,14 @@ cat <<EOF > /mnt/etc/nixos/flake.nix
 EOF
 
 cd /mnt/etc/nixos
+
+# Git init -OR- fetch and pull down existing repo
 git init -b main .
 git config user.email "steve@little-fluffy.cloud"
 git config user.name "steve"
 git add key.pub *.nix
+
+git clone https://github.com/ssosik/mail.little-fluffy.cloud.git
 ```
 
 ## Install
