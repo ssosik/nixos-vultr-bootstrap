@@ -1,4 +1,6 @@
-# nixos-configs
+# nixos-vultr-bootstrap
+
+Notes on how to bootstrap NixOS with Flakes on a Vultr VM.
 
 Following this doc: https://www.vultr.com/docs/how-to-install-nixos-on-a-vultr-vps
 
