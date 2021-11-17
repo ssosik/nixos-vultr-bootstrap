@@ -39,3 +39,117 @@ mkswap -L swap /dev/vda2
 swapon /dev/vda2
 mount /dev/disk/by-label/root /mnt
 ```
+
+## Configure NixOS
+
+```
+nixos-generate-config --root /mnt
+
+# Set hostname
+sed -i 's/  # networking.hostName = "nixos";.*/  networking.hostName = "testmachine";/' /mnt/etc/nixos/configuration.nix
+# grub device
+sed -i 's|  # boot.loader.grub.device = "/dev/sda";.*|  boot.loader.grub.device = "/dev/vda";|' /mnt/etc/nixos/configuration.nix
+# enable SSH
+sed -i 's|  # services.openssh.enable = true;|  services.openssh.enable = true;\n  services.openssh.permitRootLogin = "no";\n  services.openssh.passwordAuthentication = false;|' /mnt/etc/nixos/configuration.nix
+# Add users
+sed -i 's|      ./hardware-configuration.nix|      ./hardware-configuration.nix\n      ./users.nix|' /mnt/etc/nixos/configuration.nix
+
+cat <<EOF > /mnt/etc/nixos/users.nix
+{ config, lib, pkgs, modulesPath, ... }:
+
+{
+  users.mutableUsers = false;
+  
+  # Add a user.
+  users.users.nixos = {
+    isNormalUser = true;
+  
+    # Add a hashed password, overrides initialPassword.
+    # See below.
+    # hashedPassword = "w5Vppd2VQRgMo";
+  
+    extraGroups = [ "wheel" ];
+    openssh.authorizedKeys.keys = [
+      # Authorize the SSH public key from 'key.pub'.
+      # Remove this statement if you use password
+      # authentication.
+      (builtins.readFile ./key.pub)
+    ];
+  };
+}
+EOF
+
+cp /home/nixos/.ssh/authorized_keys /mnt/etc/nixos/key.pub
+
+```
+
+## Enable and use Flakes
+
+```
+nix-shell -p nixUnstable git
+
+cat <<EOF > /mnt/etc/nixos/flake.nix
+{
+  description = "system configuration flake";
+
+  inputs = {
+    # Replace this with any nixpkgs revision you want to use.
+    # See a list of potential revisions at
+    # https://github.com/NixOS/nixpkgs/branches/active
+    nixpkgs.url = "nixpkgs/release-21.05";
+  };
+
+  outputs = inputs@{ self, nixpkgs }:
+    let
+      lib = nixpkgs.lib;
+      nixConf = pkgs: {
+        environment.systemPackages = [ pkgs.git ];
+        nix = {
+          package = pkgs.nixFlakes;
+          extraOptions = ''
+            experimental-features = nix-command flakes
+          '';
+          autoOptimiseStore = true;
+          gc = {
+            automatic = true;
+            dates = "weekly";
+          };
+        };
+      };
+    in
+    {
+      # Replace machineName with your desired hostname.
+      nixosConfigurations.testmachine = nixpkgs.lib.nixosSystem rec {
+        system = "x86_64-linux";
+
+        modules = [
+          (nixConf nixpkgs.legacyPackages.${system})
+          ./configuration.nix
+        ];
+      };
+    };
+}
+EOF
+
+cd /mnt/etc/nixos
+git init .
+
+git add key.pub *.nix
+```
+
+## Install
+
+https://www.vultr.com/docs/how-to-install-nixos-on-a-vultr-vps#Install
+
+```
+nixos-install --no-root-passwd --flake /mnt/etc/nixos#testmachine
+```
+
+Reboot and verify
+- Go back to the dashboard
+- Select your server.
+- Click the Settings tab.
+- Find the Custom ISO sidebar in the tab.
+- Remove the ISO. This will reboot the instance.
+- SSH into the machine after it boots.
+    - Need to remove previous entry from .ssh/known_hosts on the local machine
