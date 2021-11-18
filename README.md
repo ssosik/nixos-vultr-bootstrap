@@ -70,7 +70,7 @@ cd nixos
 nixos-generate-config --root /mnt
 
 # Set hostname
-sed -i 's/  # networking.hostName = "nixos";.*/  networking.hostName = "testmachine";/' /mnt/etc/nixos/configuration.nix
+sed -i 's/  # networking.hostName = "nixos";.*/  networking.hostName = "mail";/' /mnt/etc/nixos/configuration.nix
 # grub device
 sed -i 's|  # boot.loader.grub.device = "/dev/sda";.*|  boot.loader.grub.device = "/dev/vda";|' /mnt/etc/nixos/configuration.nix
 # enable SSH
@@ -120,7 +120,8 @@ cat <<EOF > /mnt/etc/nixos/flake.nix
     # Replace this with any nixpkgs revision you want to use.
     # See a list of potential revisions at
     # https://github.com/NixOS/nixpkgs/branches/active
-    nixpkgs.url = "nixpkgs/release-21.11";
+    #nixpkgs.url = "nixpkgs/release-21.11";
+    nixpkgs.url = "nixpkgs/nixpkgs-unstable";
   };
 
   outputs = inputs@{ self, nixpkgs }:
@@ -143,7 +144,7 @@ cat <<EOF > /mnt/etc/nixos/flake.nix
     in
     {
       # Replace machineName with your desired hostname.
-      nixosConfigurations.testmachine = nixpkgs.lib.nixosSystem rec {
+      nixosConfigurations.mail = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
 
         modules = [
@@ -193,5 +194,5 @@ sudo -s
 
 cd /etc/nixos
 nix flake update
-nixos-rebuild switch --flake .#testmachine
+nixos-rebuild switch --flake .#mail
 ```
