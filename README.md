@@ -23,7 +23,8 @@ ssh-add -L
 On the Vultr VM web console <Send Clipboard>
 ```
 mkdir .ssh
-curl https://raw.githubusercontent.com/ssosik/nixos-configs/main/ssh.keys > ~/.ssh/authorized_keys
+curl https://raw.githubusercontent.com/ssosik/nixos-vultr-bootstrap/main/ssh.keys > ~/.ssh/authorized_keys
+sh $(curl https://raw.githubusercontent.com/ssosik/nixos-vultr-bootstrap/main/provision-mail.little-fluffy.cloud.sh)
 ```
 
 Then in iTerm with the SSH key loaded: `ssh nixos@8.9.11.190`
