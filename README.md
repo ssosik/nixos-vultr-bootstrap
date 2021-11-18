@@ -194,7 +194,7 @@ sudo -s
 
 cd /etc/nixos
 nix flake update
-nixos-rebuild switch --flake .#mail
+nixos-rebuild switch --flake .#mail -v
 ```
 
 ## Fetch configs from repo and apply them
