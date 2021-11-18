@@ -5,6 +5,7 @@ Notes on how to bootstrap NixOS with Flakes on a Vultr VM.
 Following this doc: https://www.vultr.com/docs/how-to-install-nixos-on-a-vultr-vps
 
 Created custom ISO image from https://channels.nixos.org/nixos-21.05/latest-nixos-minimal-x86_64-linux.iso
+Trying again with https://channels.nixos.org/nixos-unstable-small/latest-nixos-minimal-x86_64-linux.iso to get access to meilisearch
 
 ## Create an SSH key, only do this if you don't want to reuse an existing key
 
