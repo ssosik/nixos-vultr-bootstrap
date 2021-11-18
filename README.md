@@ -50,6 +50,21 @@ parted /dev/vda -s 'mklabel msdos mkpart primary 1MiB -1GiB mkpart primary linux
 
 ## Configure NixOS
 
+Git init -OR- fetch and pull down existing repo
+
+### Pull from existing repo
+
+```
+nixos-generate-config --root /mnt --dir /etc/nixos-tmp
+cd /mnt/etc
+nix-shell -p nixUnstable git
+git clone https://github.com/ssosik/mail.little-fluffy.cloud.git nixos
+cp nixos-tmp/hardware-configuration.nix nixos/.
+rm -rf nixos-tmp
+cd nixos
+```
+
+### Bootstrap a new repo instead of cloning existing
 ```
 nixos-generate-config --root /mnt
 
@@ -69,7 +84,7 @@ cat <<EOF > /mnt/etc/nixos/users.nix
   users.mutableUsers = false;
   
   # Add a user.
-  users.users.nixos = {
+  users.users.steve = {
     isNormalUser = true;
   
     # Add a hashed password, overrides initialPassword.
@@ -91,7 +106,7 @@ cp /home/nixos/.ssh/authorized_keys /mnt/etc/nixos/key.pub
 
 ```
 
-## Enable and use Flakes
+#### Enable and use Flakes
 
 ```
 nix-shell -p nixUnstable git
@@ -141,13 +156,10 @@ EOF
 
 cd /mnt/etc/nixos
 
-# Git init -OR- fetch and pull down existing repo
 git init -b main .
 git config user.email "steve@little-fluffy.cloud"
 git config user.name "steve"
 git add key.pub *.nix
-
-git clone https://github.com/ssosik/mail.little-fluffy.cloud.git
 ```
 
 ## Install
@@ -155,7 +167,7 @@ git clone https://github.com/ssosik/mail.little-fluffy.cloud.git
 https://www.vultr.com/docs/how-to-install-nixos-on-a-vultr-vps#Install
 
 ```
-nixos-install --no-root-passwd --flake /mnt/etc/nixos#testmachine
+nixos-install --no-root-passwd --flake /mnt/etc/nixos#mail
 ```
 
 Reboot and verify
@@ -171,6 +183,8 @@ Reboot and verify
 
 Log back into the machine after the reboot, clearing out the .ssh/known_hosts
 entry if needed.
+
+ssh steve@.... -p 64122
 
 ```
 sudo -s
