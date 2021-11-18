@@ -148,7 +148,7 @@ cat <<EOF > /mnt/etc/nixos/flake.nix
         system = "x86_64-linux";
 
         modules = [
-          (nixConf nixpkgs.legacyPackages.${system})
+          (nixConf nixpkgs.legacyPackages.\${system})
           ./configuration.nix
         ];
       };
@@ -158,7 +158,7 @@ EOF
 
 cd /mnt/etc/nixos
 
-git init -b main .
+git init -b unstable-21.11 .
 git config user.email "steve@little-fluffy.cloud"
 git config user.name "steve"
 git add key.pub *.nix
@@ -195,4 +195,13 @@ sudo -s
 cd /etc/nixos
 nix flake update
 nixos-rebuild switch --flake .#mail
+```
+
+## Fetch configs from repo and apply them
+```
+git remote add origin https://github.com/ssosik/mail.little-fluffy.cloud.git
+git fetch
+git checkout main
+git checkout -p unstable-21.11
+# Keep "main" except for unstable-21.11 changes to flake.lock, flake.nix, and hardware-configuration.nix
 ```
