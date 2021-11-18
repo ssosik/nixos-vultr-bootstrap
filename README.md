@@ -120,7 +120,7 @@ cat <<EOF > /mnt/etc/nixos/flake.nix
     # Replace this with any nixpkgs revision you want to use.
     # See a list of potential revisions at
     # https://github.com/NixOS/nixpkgs/branches/active
-    nixpkgs.url = "nixpkgs/release-21.05";
+    nixpkgs.url = "nixpkgs/release-21.11";
   };
 
   outputs = inputs@{ self, nixpkgs }:
