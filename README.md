@@ -6,6 +6,7 @@ Following this doc: https://www.vultr.com/docs/how-to-install-nixos-on-a-vultr-v
 
 Created custom ISO image from https://channels.nixos.org/nixos-21.05/latest-nixos-minimal-x86_64-linux.iso
 Trying again with https://channels.nixos.org/nixos-unstable-small/latest-nixos-minimal-x86_64-linux.iso to get access to meilisearch
+Trying yet again with above 21.05 ISO
 
 ## Create an SSH key, only do this if you don't want to reuse an existing key
 
@@ -70,7 +71,7 @@ cd nixos
 nixos-generate-config --root /mnt
 
 # Set hostname
-sed -i 's/  # networking.hostName = "nixos";.*/  networking.hostName = "testmachine";/' /mnt/etc/nixos/configuration.nix
+sed -i 's/  # networking.hostName = "nixos";.*/  networking.hostName = "mail";/' /mnt/etc/nixos/configuration.nix
 # grub device
 sed -i 's|  # boot.loader.grub.device = "/dev/sda";.*|  boot.loader.grub.device = "/dev/vda";|' /mnt/etc/nixos/configuration.nix
 # enable SSH
@@ -143,11 +144,11 @@ cat <<EOF > /mnt/etc/nixos/flake.nix
     in
     {
       # Replace machineName with your desired hostname.
-      nixosConfigurations.testmachine = nixpkgs.lib.nixosSystem rec {
+      nixosConfigurations.mail = nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
 
         modules = [
-          (nixConf nixpkgs.legacyPackages.${system})
+          (nixConf nixpkgs.legacyPackages.\${system})
           ./configuration.nix
         ];
       };
@@ -157,7 +158,7 @@ EOF
 
 cd /mnt/etc/nixos
 
-git init -b main .
+git init -b new-21.05 .
 git config user.email "steve@little-fluffy.cloud"
 git config user.name "steve"
 git add key.pub *.nix
@@ -193,5 +194,14 @@ sudo -s
 
 cd /etc/nixos
 nix flake update
-nixos-rebuild switch --flake .#testmachine
+nixos-rebuild switch --flake .#mail -v
+```
+
+## Fetch configs from repo and apply them
+```
+git remote add origin https://github.com/ssosik/mail.little-fluffy.cloud.git
+git fetch
+git checkout main
+git checkout -p new-21.05
+# Keep "main" except for new-21.05 changes to flake.lock, flake.nix, and hardware-configuration.nix
 ```
