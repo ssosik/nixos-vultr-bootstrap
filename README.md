@@ -170,6 +170,8 @@ https://www.vultr.com/docs/how-to-install-nixos-on-a-vultr-vps#Install
 
 ```
 nixos-install --no-root-passwd --flake /mnt/etc/nixos#mail
+git add flake.lock
+git commit -m 'initial commit'
 ```
 
 Reboot and verify
@@ -186,7 +188,7 @@ Reboot and verify
 Log back into the machine after the reboot, clearing out the .ssh/known_hosts
 entry if needed.
 
-ssh steve@.... -p 64122
+ssh steve@....
 
 ```
 sudo -s
