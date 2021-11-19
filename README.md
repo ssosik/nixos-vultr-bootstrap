@@ -169,6 +169,9 @@ https://www.vultr.com/docs/how-to-install-nixos-on-a-vultr-vps#Install
 
 ```
 nixos-install --no-root-passwd --flake /mnt/etc/nixos#mail
+git add flake.lock
+git branch -m wip
+git commit -m 'initial commit'
 ```
 
 Reboot and verify
@@ -200,7 +203,7 @@ nixos-rebuild switch --flake .#mail -v
 ```
 git remote add origin https://github.com/ssosik/mail.little-fluffy.cloud.git
 git fetch
-git checkout main
-git checkout -p unstable-21.11
-# Keep "main" except for unstable-21.11 changes to flake.lock, flake.nix, and hardware-configuration.nix
+git checkout -p origin/main
+# Accept "main" changes except for local changes to flake.lock, flake.nix, and hardware-configuration.nix
+nixos-rebuild switch --flake .#mail -v
 ```
