@@ -63,6 +63,8 @@ git clone https://github.com/ssosik/mail.little-fluffy.cloud.git nixos
 cp nixos-tmp/hardware-configuration.nix nixos/.
 rm -rf nixos-tmp
 cd nixos
+git config user.email "steve@little-fluffy.cloud"
+git config user.name "steve"
 ```
 
 ### Bootstrap a new repo instead of cloning existing
